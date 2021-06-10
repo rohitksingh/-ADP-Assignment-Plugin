@@ -12,24 +12,32 @@ import org.json.JSONObject;
 
 public class AdpAssignmentPlugin extends CordovaPlugin {
   private static final String DURATION_LONG = "3";
+  protected static final String TAG = "AdpAssignmentPlugin";
+  protected CallbackContext context;
+
   @Override
   public boolean execute(String action, JSONArray args,
     final CallbackContext callbackContext) {
-      
-      if (!action.equals("show")) {
-        callbackContext.error("\"" + action + "\" is not a recognized action.");
+      context = callbackContext;
+      if (!action.equals("calculate")) {
+        context.error("\"" + action + "\" is not a recognized action.");
+        Toast toast = Toast.makeText(cordova.getActivity(), "message",
+        Toast.LENGTH_LONG);  
+        toast.show();
         return false;
       }
       String message;
       String duration;
 
+      duration = "3";
+
       try {
         JSONObject options = args.getJSONObject(0);
         int value = options.getInt("message");
         message = String.valueOf(value*10);
-        duration = options.getString("duration");
+        context.success(message);
       } catch (JSONException e) {
-        callbackContext.error("Error encountered: " + e.getMessage());
+        context.error("Error encountered: " + e.getMessage());
         return false;
       }
       
@@ -38,7 +46,7 @@ public class AdpAssignmentPlugin extends CordovaPlugin {
       toast.show();
     
       PluginResult pluginResult = new PluginResult(PluginResult.Status.OK);
-      callbackContext.sendPluginResult(pluginResult);
+      context.sendPluginResult(pluginResult);
       return true;
   }
 }
